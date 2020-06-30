@@ -1,0 +1,107 @@
+<Schema name="Otrs">
+  <Cube name="Chamado" visible="true" cache="true" enabled="true">
+    <Table name="ft_chamado">
+    </Table>
+    <Dimension type="TimeDimension" visible="true" foreignKey="data_referencia" highCardinality="false" name="Tempo">
+      <Hierarchy visible="true" hasAll="true" primaryKey="data">
+        <Table name="dm_tempo">
+        </Table>
+        <Level name="Ano" visible="true" column="ano" ordinalColumn="mes" type="String" uniqueMembers="false" levelType="TimeYears" hideMemberIf="Never">
+        </Level>
+        <Level name="Mes" visible="true" column="descricaoMes" type="String" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+        </Level>
+        <Level name="Dia" visible="true" column="dia" type="Date" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="chamado_id" highCardinality="false" name="Chamados">
+      <Hierarchy visible="true" hasAll="true" primaryKey="chamado_id">
+        <Table name="dm_chamado">
+        </Table>
+        <Level name="situacao" visible="true" column="situacao" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" captionColumn="situacao">
+        </Level>
+        <Level name="id_chamado" visible="true" column="chamado_id" type="Integer" internalType="int" uniqueMembers="false" captionColumn="chamado_id">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="analista_id" highCardinality="false" name="Analista">
+      <Hierarchy name="New Hierarchy 0" visible="true" hasAll="true" primaryKey="analista_id">
+        <Table name="dm_analista">
+        </Table>
+        <Level name="nome" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="fila_id" highCardinality="false" name="Fila">
+      <Hierarchy visible="true" hasAll="true" primaryKey="fila_id">
+        <Table name="dm_fila">
+        </Table>
+        <Level name="nome_fila" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="sub_fila" visible="true" column="subfila" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="servico_id" highCardinality="false" name="Servico">
+      <Hierarchy visible="true" hasAll="true" primaryKey="servico_id">
+        <Table name="dm_servico">
+        </Table>
+        <Level name="nome_servico" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="equipe" visible="true" column="equipe" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="categoria" visible="true" column="categoria" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="atividade" visible="true" column="atividade" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="sla_id" highCardinality="false" name="Sla">
+      <Hierarchy visible="true" hasAll="true" primaryKey="sla_id">
+        <Table name="dm_sla">
+        </Table>
+        <Level name="nome_sla" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="tempo" visible="true" column="tempo" type="Timestamp" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="segundos" visible="true" column="tempo_segundos" type="Timestamp" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="solicitante_id" highCardinality="false" name="Solicitante">
+      <Hierarchy visible="true" hasAll="true" primaryKey="solicitante_id">
+        <Table name="dm_solicitante">
+        </Table>
+        <Level name="nome_solicitante" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="status_id" highCardinality="false" name="Status">
+      <Hierarchy visible="true" hasAll="true" primaryKey="status_id">
+        <Table name="dm_status">
+        </Table>
+        <Level name="status" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Quantidade" column="quantidade_chamado" datatype="Integer" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="Tempo" column="tempo_atendimento" datatype="String" aggregator="sum" visible="true">
+      <CellFormatter>
+        <Script language="JavaScript">
+          <![CDATA[var seconds = Number(value);
+		var d = Math.floor(seconds / (3600*24));
+		var h = Math.floor(seconds % (3600*24) / 3600);
+		var m = Math.floor(seconds % 3600 / 60);
+		var s = Math.floor(seconds % 60);
+
+		var dDisplay = d > 0 ? d + (d == 1 ? " dia, " : " dias, ") : "";
+		var hDisplay = h > 0 ? h + ":" : "0:";
+		var mDisplay = m > 0 ? m + ":" : "00:";
+		var sDisplay = s > 0 ? s : "00";
+		return dDisplay + hDisplay + mDisplay + sDisplay;]]>
+        </Script>
+      </CellFormatter>
+    </Measure>
+  </Cube>
+</Schema>
